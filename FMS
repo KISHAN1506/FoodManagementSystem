@@ -1,0 +1,199 @@
+import pandas as pd
+import matplotlib.pyplot as plt
+import mysql.connector as conn
+from prettytable import PrettyTable
+print("This Is The Street Food Management Programme")
+db_connection = conn.connect(host='localhost', database='school_proj',user='root', password='root@123')
+
+if db_connection.is_connected():
+    print("Connected Successfully")
+    cur = db_connection.cursor()
+
+cid = input("Enter Customer ID:")
+cname = input("Enter Customer Name:")
+cadd = input("Enter Customer Address:")
+phone = input("Enter Customer Phone:")
+email = input("Enter Customer Email:")
+
+query = "INSERT INTO customer VALUES('{}','{}','{}','{}','{}')".format(cid, cname, cadd, phone,email)
+cur.execute(query)
+db_connection.commit()
+
+print("The available shops are:\n1.Chinese Stall\n2.Italian Stall")
+selection = int(input("Choose the Shop from whom you want to order:"))
+
+if selection == 1:
+    print("You Have Chosen Chinese Stall")
+    optforch = int(input("The Available Options are as follows for the Chinese Stall:\n1.Manchurian\n2.Paneer Chilli\n--->"))
+    if optforch == 1:
+        print("You Have Chosen Manchurian")
+        optforsizman = int(input("There are 2 options:\n1.Full Plate\n2.Half Plate:\n—>"))
+        if optforsizman == 1:
+            print("You have chosen a full plate of Manchurian")
+            print("Thank-You!!")
+            item = "Manchurian"
+            size = "Full Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+
+        elif optforsizman == 2:
+            print("You have chosen a half plate of Manchurian")
+            print("Thank-You!!")
+            item = "Manchurian"
+            size = "Half Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        else:
+            print("Invalid Choice!")
+    elif optforch == 2:
+        print("You Have Chosen Paneer Chilli")
+        optforsizman = int(input("There are 2 options:\n1.Full Plate\n2.Half Plate:\n—>"))
+        if optforsizman == 1:
+            print("You have chosen a full plate of Paneer Chilli")
+            print("Thank-You!!")
+            item = "Paneer Chilli"
+            size = "Full Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        elif optforsizman == 2:
+            print("You have chosen a half plate of Paneer Chilli")
+            print("Thank-You!!")
+            item = "Paneer Chilli"
+            size = "Half Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        else:
+            print("Invalid Choice!")
+    else:
+        print("Invalid Choice!")
+elif selection == 2:
+    print("You Have Chosen Italian Stall")
+    optforch = int(input("The Available Options are as follows for the Italian Stall:\n1.Pasta\n2.Pizza\n--->"))
+    if optforch == 1:
+        print("You Have Chosen Pasta")
+        optforsizman = int(input("There are 2 options:\n1.Full Plate\n2.Half Plate:\n--->"))
+        if optforsizman == 1:
+            print("You have chosen a full plate of Pasta")
+            print("Thank-You!!")
+            item = "Pasta"
+            size = "Full Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        elif optforsizman == 2:
+            print("You have chosen a half plate of Pasta")
+            print("Thank-You!!")
+            item = "Pasta"
+            size = "Half Plate"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        else:
+            print("Invalid Choice!")
+    elif optforch == 2:
+        print("You Have Chosen Pizza")
+        optforsizman = int(input("There are 2 options:\n1.Regular Size\n2.Big Size:\n--->"))
+        if optforsizman == 1:
+            print("You have chosen a regular size of Pizza")
+            print("Thank-You!!")
+            item = "Pizza"
+            size = "Regular Size"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        elif optforsizman == 2:
+            print("You have chosen a big size of Pizza")
+            print("Thank-You!!")
+            item = "Pizza"
+            size = "Big Size"
+            query2 = "INSERT INTO orderdetail VALUES('{}','{}','{}')".format(item, size, cid)
+            cur.execute(query2)
+            db_connection.commit()
+        else:
+            print("Invalid Choice!")
+    else:
+        print("Invalid Choice!")
+else:
+    print("Invalid Choice!")
+
+print("Payment Options:\n1. Cash on Delivery (COD)\n2. Card Payment")
+payment_option = int(input("Select a payment option (1 or 2):"))
+if payment_option == 1:
+    print("Payment will be taken at the time of delivery. Enjoy your meal!")
+    query_payment = "INSERT INTO payment_detail (cid, payment_method) VALUES ('{}', 'COD')".format(cid)
+    cur.execute(query_payment)
+    db_connection.commit()
+elif payment_option == 2:
+    card_number = input("Enter your card number:")
+    expiry_date = input("Enter card expiry date (MM/YY):")
+    cvv = input("Enter CVV:")
+    print("Card Payment Successful! Thank you for your order. Enjoy your meal!")
+    query_payment = "INSERT INTO payment_detail (cid, payment_method,card_number, expiry_date, cvv) VALUES ('{}', 'Card', '{}', '{}','{}')".format(cid, card_number, expiry_date, cvv)
+    cur.execute(query_payment)
+    db_connection.commit()
+else:
+    print("Invalid Payment Option!")
+    seedata = int(input("Do you want to see the data?\n(1->YES, 2->NO)\n--->"))
+    if seedata == 1:
+        cursor = db_connection.cursor()
+        cursor.execute("SELECT * FROM customer;")
+        records = cursor.fetchall()
+        dfc = PrettyTable(["ID","Name","Address","Phone","Email"])
+        dfc.add_rows(records)
+        print("Customer Data:")
+        print(dfc)
+        cursor.execute("SELECT * FROM orderdetail;")
+        records = cursor.fetchall()
+        df = PrettyTable(["Item","Size","Customer ID"])
+        df.add_rows(records)
+        print("Order Detail Data:")
+        print(df)
+        cursor.execute("SELECT * FROM payment_detail;")
+        records = cursor.fetchall()
+        df = PrettyTable(["Customer ID","Payment Method","Card Number","Expiry Date","CVV"])
+        df.add_rows(records)
+        print("Payment Detail Data:")
+        print(df)
+        cursor.execute("SELECT payment_method, COUNT(DISTINCT cid) as count FROM payment_detail GROUP BY payment_method;")
+        records = cursor.fetchall()
+        print("\nPayment Method Data:")
+        df = PrettyTable(["Payment Method","User Count"])
+        for record in records:
+            df.add_row([record[0], record[1]])
+            print(df)
+            payment = [record[0] for record in records]
+            user = [record[1] for record in records]
+            plt.plot(payment, user, marker='o', linestyle='dashdot',color='purple')
+            plt.title('Payment Method Distribution')
+            plt.xlabel('Payment Method')
+            plt.ylabel('User Count')
+            plt.show()
+    elif seedata == 2:
+        print("Okay!")
+    else:
+        print("Invalid Choice")
+
+cur.execute("SELECT item, COUNT(DISTINCT cid) as user_count FROM orderdetail GROUP BY item;")
+records = cur.fetchall()
+
+print("\nItem User Count Data:")
+df_item_user_count = PrettyTable(["Item","User Count"])
+for record in records:
+    df_item_user_count.add_row([record[0], record[1]])
+print(df_item_user_count)
+
+items = [record[0] for record in records]
+user_count = [record[1] for record in records]
+
+plt.bar(items, user_count, color='yellow')
+plt.title('User Count per Item')
+plt.xlabel('Item')
+plt.ylabel('User Count')
+plt.show()
+
+cursor.close()
+db_connection.close()
